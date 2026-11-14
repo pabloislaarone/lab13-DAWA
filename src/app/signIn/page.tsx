@@ -61,8 +61,9 @@ function LoginForm() {
       return;
     }
 
-    router.push('/dashboard');
-    router.refresh();
+    // Navegación completa: evita que Next reutilice la redirección
+    // a /signIn que quedó en caché antes de iniciar sesión
+    window.location.href = '/dashboard';
   };
 
   const used = error ? attemptsFromError(error) : 0;
