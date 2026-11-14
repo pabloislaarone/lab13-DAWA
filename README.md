@@ -6,16 +6,20 @@
 src/
 ├── app/
 │   ├── api/auth/[...nextauth]/route.ts   # Handler de NextAuth
+│   ├── api/register/route.ts             # Registro (hash con bcrypt)
 │   ├── dashboard/page.tsx                # Ruta protegida
 │   ├── profile/page.tsx                  # Ruta protegida
-│   ├── signIn/page.tsx                   # Login
+│   ├── register/page.tsx                 # Formulario de registro
+│   ├── signIn/page.tsx                   # Login (credenciales, Google, GitHub)
 │   ├── layout.tsx                        # Navbar + SessionProvider
 │   └── page.tsx                          # Redirige a /dashboard
 ├── components/
 │   ├── LogoutButton.tsx
 │   └── SessionProvider.tsx
 ├── lib/
-│   └── auth.ts                           # authOptions (proveedores)
+│   ├── auth.ts                           # authOptions (Google, GitHub, Credentials)
+│   ├── db.ts                             # Conexión a Postgres (Neon)
+│   └── users.ts                          # Registro, bcrypt y bloqueo por intentos
 └── proxy.ts                              # Protección de rutas
 ```
 
