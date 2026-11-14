@@ -41,7 +41,7 @@ export default function Lock({ state, set = [false, false, false], failed = 0, f
   return (
     <svg
       viewBox="0 0 300 220"
-      className={`w-full max-w-lg ${shake ? 'cerrojo-golpe' : ''}`}
+      className={`w-full max-w-[680px] ${shake ? 'cerrojo-golpe' : ''}`}
       role="img"
       aria-label={
         locked

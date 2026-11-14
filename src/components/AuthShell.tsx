@@ -20,7 +20,7 @@ export default function AuthShell({
         <p className="max-w-md text-xl leading-snug text-[#c9d4e3]">
           Entra con tu correo, con Google o con GitHub. Tres intentos fallidos cierran la cuenta por cinco minutos.
         </p>
-        <div className="flex flex-col items-start gap-6">
+        <div className="flex w-full flex-1 flex-col items-start justify-center gap-8">
           {lock}
           <div className="min-h-16 text-xl font-medium text-[#e6ecf4]" aria-live="polite">
             {caption}
