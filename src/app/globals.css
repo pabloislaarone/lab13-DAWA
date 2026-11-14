@@ -1,26 +1,49 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --cobalto: #1f3fd1;
+  --cobalto-hondo: #16309f;
+  --tinta: #0e1a3c;
+  --tinta-suave: #4a5679;
+  --niebla: #eef1f7;
+  --linea: #d5dbe8;
+  --senal: #e5484d;
+  --verde: #1f9d6b;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-cobalto: var(--cobalto);
+  --color-cobalto-hondo: var(--cobalto-hondo);
+  --color-tinta: var(--tinta);
+  --color-tinta-suave: var(--tinta-suave);
+  --color-niebla: var(--niebla);
+  --color-linea: var(--linea);
+  --color-senal: var(--senal);
+  --color-verde: var(--verde);
+  --font-sans: "Schibsted Grotesk", system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--niebla);
+  color: var(--tinta);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 3px solid var(--cobalto);
+  outline-offset: 2px;
+}
+
+/* Al cerrarse la cerradura, los pines caen una sola vez */
+@keyframes pin-cae {
+  0% { transform: translateY(-6px); opacity: 0.4; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.pin-activo {
+  animation: pin-cae 220ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pin-activo { animation: none; }
 }

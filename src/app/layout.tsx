@@ -1,22 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import "@fontsource/schibsted-grotesk/400.css";
+import "@fontsource/schibsted-grotesk/600.css";
+import "@fontsource/schibsted-grotesk/700.css";
+import "@fontsource/schibsted-grotesk/800.css";
 import "./globals.css";
 import Link from "next/link";
 import LogoutButton from "../components/LogoutButton";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import Image from "next/image";
 import Provider from "@/components/SessionProvider";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import Avatar from "@/components/Avatar";
 
 export const metadata: Metadata = {
   title: "Next Auth App",
@@ -31,25 +24,24 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
 
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <nav className="w-full bg-black text-white shadow-sm">
-          <div className="mx-auto px-6 py-4 flex items-center justify-between">
-            <Link href="/" className="text-xl font-semibold">
+    <html lang="es">
+      <body className="antialiased">
+        <nav className="h-16 w-full border-b-2 border-linea bg-white">
+          <div className="mx-auto flex h-full max-w-5xl items-center justify-between px-6">
+            <Link href="/" className="flex items-center gap-2 text-lg font-extrabold tracking-tight">
+              <span className="h-3 w-3 rounded-full bg-cobalto" aria-hidden="true" />
               MyAuthApp
             </Link>
-            <ul className="flex items-center justify-center gap-6 text-sm">
+            <ul className="flex items-center gap-5 text-sm font-semibold">
               <li>
-                <Link href="/dashboard" className="hover:text-gray-400">
+                <Link href="/dashboard" className="hover:text-cobalto">
                   Dashboard
                 </Link>
               </li>
               {session?.user && (
                 <li>
-                  <Link href="/profile" className="hover:text-gray-400">
-                    Profile
+                  <Link href="/profile" className="hover:text-cobalto">
+                    Perfil
                   </Link>
                 </li>
               )}
@@ -58,15 +50,9 @@ export default async function RootLayout({
                   <LogoutButton />
                 </li>
               )}
-              {session?.user?.image && (
+              {session?.user && (
                 <li>
-                  <Image
-                    height={100}
-                    width={100}
-                    src={session.user.image}
-                    alt="Profile"
-                    className="w-10 h-10 rounded-full"
-                  />
+                  <Avatar name={session.user.name} image={session.user.image} size={36} />
                 </li>
               )}
             </ul>

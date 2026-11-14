@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import AuthShell, { AuthLink } from '@/components/AuthShell';
+import Field from '@/components/Field';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -40,66 +41,57 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h1 className="text-2xl text-gray-800 font-bold mb-6 text-center">
-          Crear cuenta
-        </h1>
+    <AuthShell title="Crea tu cuenta" subtitle="Tu contraseña se guarda cifrada con bcrypt.">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Field
+          label="Nombre"
+          type="text"
+          autoComplete="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <Field
+          label="Correo"
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <Field
+          label="Contraseña"
+          type="password"
+          autoComplete="new-password"
+          placeholder="Mínimo 8 caracteres"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          minLength={8}
+        />
+        <Field
+          label="Repite la contraseña"
+          type="password"
+          autoComplete="new-password"
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+          required
+        />
 
-        {error && (
-          <p className="bg-red-100 text-red-700 text-sm p-3 rounded mb-4">{error}</p>
-        )}
+        {error && <p className="text-sm font-medium text-senal">{error}</p>}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <input
-            type="text"
-            placeholder="Nombre"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            className="border border-gray-300 rounded px-3 py-2 text-gray-800"
-          />
-          <input
-            type="email"
-            placeholder="Correo"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="border border-gray-300 rounded px-3 py-2 text-gray-800"
-          />
-          <input
-            type="password"
-            placeholder="Contraseña (mín. 8 caracteres)"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={8}
-            className="border border-gray-300 rounded px-3 py-2 text-gray-800"
-          />
-          <input
-            type="password"
-            placeholder="Confirmar contraseña"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            required
-            className="border border-gray-300 rounded px-3 py-2 text-gray-800"
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-700 transition disabled:opacity-50"
-          >
-            {loading ? 'Registrando...' : 'Registrarse'}
-          </button>
-        </form>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-md bg-cobalto px-4 py-3 font-semibold text-white transition-colors hover:bg-cobalto-hondo disabled:opacity-60"
+        >
+          {loading ? 'Creando cuenta…' : 'Crear cuenta'}
+        </button>
+      </form>
 
-        <p className="text-sm text-gray-600 text-center mt-4">
-          ¿Ya tienes cuenta?{' '}
-          <Link href="/signIn" className="text-blue-600 hover:underline">
-            Inicia sesión
-          </Link>
-        </p>
-      </div>
-    </div>
+      <p className="mt-8 text-sm text-tinta-suave">
+        ¿Ya tienes cuenta? <AuthLink href="/signIn">Inicia sesión</AuthLink>
+      </p>
+    </AuthShell>
   );
 }

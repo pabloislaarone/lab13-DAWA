@@ -34,6 +34,17 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+  callbacks: {
+    // Guarda en el token con qué proveedor inició sesión el usuario
+    async jwt({ token, account }) {
+      if (account) token.provider = account.provider;
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) session.user.provider = token.provider;
+      return session;
+    },
+  },
   pages: {
     signIn: "/signIn",
   },

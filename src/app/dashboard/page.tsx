@@ -1,24 +1,38 @@
 import { getServerSession } from 'next-auth';
+import Link from 'next/link';
 import { authOptions } from '@/lib/auth';
+import { providerName } from '@/lib/providers';
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
+  const firstName = session?.user?.name?.split(' ')[0];
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-3xl text-gray-900 font-bold mb-4">
-            Dashboard
-          </h1>
+    <div className="mx-auto max-w-5xl px-6 py-14">
+      <h1 className="text-5xl font-extrabold tracking-tight md:text-6xl">
+        Hola, {firstName}
+      </h1>
+      <p className="mt-4 max-w-lg text-lg text-tinta-suave">
+        Tu sesión está activa. Las páginas Dashboard y Perfil solo se abren con sesión iniciada.
+      </p>
 
-          <div className="mb-6">
-            <p className="text-gray-700 mb-2">
-              Bienvenido, <span className="font-semibold">{session?.user?.name}</span>
-            </p>
-          </div>
+      <dl className="mt-12 grid gap-px overflow-hidden rounded-lg border-2 border-linea bg-linea sm:grid-cols-2">
+        <div className="bg-white p-6">
+          <dt className="text-sm text-tinta-suave">Entraste con</dt>
+          <dd className="mt-1 text-2xl font-bold">{providerName(session?.user?.provider)}</dd>
         </div>
-      </div>
+        <div className="bg-white p-6">
+          <dt className="text-sm text-tinta-suave">Correo de la sesión</dt>
+          <dd className="mt-1 truncate text-2xl font-bold">{session?.user?.email}</dd>
+        </div>
+      </dl>
+
+      <Link
+        href="/profile"
+        className="mt-8 inline-block rounded-md bg-cobalto px-5 py-3 font-semibold text-white transition-colors hover:bg-cobalto-hondo"
+      >
+        Ver mi perfil
+      </Link>
     </div>
   );
 }

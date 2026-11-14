@@ -14,6 +14,10 @@ src/
 │   ├── layout.tsx                        # Navbar + SessionProvider
 │   └── page.tsx                          # Redirige a /dashboard
 ├── components/
+│   ├── AuthShell.tsx                     # Pantalla dividida de login/registro
+│   ├── Avatar.tsx
+│   ├── Field.tsx
+│   ├── LockPins.tsx                      # Indicador de intentos fallidos
 │   ├── LogoutButton.tsx
 │   └── SessionProvider.tsx
 ├── lib/
