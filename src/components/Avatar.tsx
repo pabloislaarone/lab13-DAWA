@@ -32,7 +32,7 @@ export default function Avatar({
 
   return (
     <span
-      className="inline-flex items-center justify-center rounded-full bg-cobalto font-bold text-white"
+      className="inline-flex items-center justify-center rounded-full bg-acero font-bold text-white"
       style={{ width: size, height: size, fontSize: size * 0.4 }}
       aria-hidden="true"
     >

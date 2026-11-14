@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
-import "@fontsource/schibsted-grotesk/400.css";
-import "@fontsource/schibsted-grotesk/600.css";
-import "@fontsource/schibsted-grotesk/700.css";
-import "@fontsource/schibsted-grotesk/800.css";
+import "@fontsource-variable/bricolage-grotesque";
 import "./globals.css";
 import Link from "next/link";
 import LogoutButton from "../components/LogoutButton";
@@ -10,10 +7,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Provider from "@/components/SessionProvider";
 import Avatar from "@/components/Avatar";
+import Brand from "@/components/Brand";
 
 export const metadata: Metadata = {
-  title: "Next Auth App",
-  description: "My Next Auth App",
+  title: "Cerrojo",
+  description: "Inicio de sesión con correo, Google y GitHub",
 };
 
 export default async function RootLayout({
@@ -26,21 +24,20 @@ export default async function RootLayout({
   return (
     <html lang="es">
       <body className="antialiased">
-        <nav className="h-16 w-full border-b-2 border-linea bg-white">
-          <div className="mx-auto flex h-full max-w-5xl items-center justify-between px-6">
-            <Link href="/" className="flex items-center gap-2 text-lg font-extrabold tracking-tight">
-              <span className="h-3 w-3 rounded-full bg-cobalto" aria-hidden="true" />
-              MyAuthApp
+        <nav className="h-16 w-full border-b border-linea bg-papel">
+          <div className="flex h-full items-center justify-between px-6 lg:px-14">
+            <Link href="/" aria-label="Cerrojo, inicio">
+              <Brand />
             </Link>
             <ul className="flex items-center gap-5 text-sm font-semibold">
               <li>
-                <Link href="/dashboard" className="hover:text-cobalto">
+                <Link href="/dashboard" className="hover:text-laton-hondo">
                   Dashboard
                 </Link>
               </li>
               {session?.user && (
                 <li>
-                  <Link href="/profile" className="hover:text-cobalto">
+                  <Link href="/profile" className="hover:text-laton-hondo">
                     Perfil
                   </Link>
                 </li>

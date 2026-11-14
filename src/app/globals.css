@@ -1,49 +1,103 @@
 @import "tailwindcss";
 
 :root {
-  --cobalto: #1f3fd1;
-  --cobalto-hondo: #16309f;
-  --tinta: #0e1a3c;
-  --tinta-suave: #4a5679;
-  --niebla: #eef1f7;
-  --linea: #d5dbe8;
-  --senal: #e5484d;
-  --verde: #1f9d6b;
+  --acero: #14233a;
+  --acero-2: #1f3354;
+  --acero-3: #5d7393;
+  --laton: #c99a3e;
+  --laton-hondo: #8f6a22;
+  --niebla: #edf0f3;
+  --linea: #d3d9e1;
+  --papel: #ffffff;
+  --bloqueo: #d2453b;
+  --abierto: #2f8f5b;
+  --ease-llegada: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @theme inline {
-  --color-cobalto: var(--cobalto);
-  --color-cobalto-hondo: var(--cobalto-hondo);
-  --color-tinta: var(--tinta);
-  --color-tinta-suave: var(--tinta-suave);
+  --color-acero: var(--acero);
+  --color-acero-2: var(--acero-2);
+  --color-acero-3: var(--acero-3);
+  --color-laton: var(--laton);
+  --color-laton-hondo: var(--laton-hondo);
   --color-niebla: var(--niebla);
   --color-linea: var(--linea);
-  --color-senal: var(--senal);
-  --color-verde: var(--verde);
-  --font-sans: "Schibsted Grotesk", system-ui, sans-serif;
+  --color-papel: var(--papel);
+  --color-bloqueo: var(--bloqueo);
+  --color-abierto: var(--abierto);
+  --font-sans: "Bricolage Grotesque Variable", system-ui, sans-serif;
 }
 
 html,
 body {
   background: var(--niebla);
-  color: var(--tinta);
+  color: var(--acero);
   font-family: var(--font-sans);
+  font-optical-sizing: auto;
+}
+
+h1,
+h2 {
+  text-wrap: balance;
+}
+
+::selection {
+  background: var(--laton);
+  color: var(--acero);
+}
+
+input {
+  caret-color: var(--laton-hondo);
 }
 
 :focus-visible {
-  outline: 3px solid var(--cobalto);
+  outline: 3px solid var(--laton);
   outline-offset: 2px;
 }
 
-/* Al cerrarse la cerradura, los pines caen una sola vez */
-@keyframes pin-cae {
-  0% { transform: translateY(-6px); opacity: 0.4; }
-  100% { transform: translateY(0); opacity: 1; }
+/* ---------- Cerradura ---------- */
+.pieza {
+  transform-box: fill-box;
+  transition:
+    transform 420ms var(--ease-llegada),
+    fill 220ms ease-out,
+    opacity 220ms ease-out;
 }
-.pin-activo {
-  animation: pin-cae 220ms ease-out both;
+
+/* Un pin que falla cae y rebota contra el resorte */
+@keyframes pin-falla {
+  0% { transform: translateY(0); }
+  35% { transform: translateY(14px); }
+  65% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+.pin-falla {
+  animation: pin-falla 460ms var(--ease-llegada);
+}
+
+/* La cerradura se sacude cuando se bloquea */
+@keyframes cerrojo-golpe {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  45% { transform: translateX(5px); }
+  70% { transform: translateX(-3px); }
+}
+.cerrojo-golpe {
+  animation: cerrojo-golpe 380ms ease-out;
+}
+
+/* Entrada de la pantalla: el panel de la cerradura se descubre una sola vez */
+@keyframes panel-revela {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+.panel-revela {
+  animation: panel-revela 700ms var(--ease-llegada) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pin-activo { animation: none; }
+  .pieza { transition: fill 150ms ease-out, opacity 150ms ease-out; }
+  .pin-falla,
+  .cerrojo-golpe,
+  .panel-revela { animation: none; }
 }

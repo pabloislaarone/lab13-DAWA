@@ -7,33 +7,32 @@ export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
   const user = session?.user;
 
+  const rows = [
+    { label: 'Nombre', value: user?.name ?? '—' },
+    { label: 'Correo', value: user?.email ?? '—' },
+    { label: 'Proveedor', value: providerName(user?.provider) },
+    { label: 'Foto de perfil', value: user?.image ? `La de tu cuenta de ${providerName(user?.provider)}` : 'Tus iniciales (sin foto)' },
+  ];
+
   return (
-    <div className="mx-auto max-w-5xl px-6 py-14">
-      <div className="flex flex-col gap-8 rounded-lg border-2 border-linea bg-white p-8 sm:flex-row sm:items-center">
-        <Avatar name={user?.name} image={user?.image} size={112} />
+    <div className="mx-auto max-w-4xl px-6 py-12 lg:py-16">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+        <div className="rounded-full ring-4 ring-laton ring-offset-4 ring-offset-niebla">
+          <Avatar name={user?.name} image={user?.image} size={120} />
+        </div>
         <div className="min-w-0">
-          <h1 className="text-4xl font-extrabold tracking-tight">{user?.name}</h1>
-          <p className="mt-1 truncate text-lg text-tinta-suave">{user?.email}</p>
+          <h1 className="text-5xl font-bold tracking-tight">{user?.name}</h1>
+          <p className="mt-1 truncate text-lg text-acero-3">{user?.email}</p>
         </div>
       </div>
 
-      <dl className="mt-6 divide-y-2 divide-linea rounded-lg border-2 border-linea bg-white">
-        <div className="flex justify-between gap-4 px-8 py-4">
-          <dt className="text-tinta-suave">Nombre</dt>
-          <dd className="font-semibold">{user?.name}</dd>
-        </div>
-        <div className="flex justify-between gap-4 px-8 py-4">
-          <dt className="text-tinta-suave">Correo</dt>
-          <dd className="truncate font-semibold">{user?.email}</dd>
-        </div>
-        <div className="flex justify-between gap-4 px-8 py-4">
-          <dt className="text-tinta-suave">Proveedor</dt>
-          <dd className="font-semibold">{providerName(user?.provider)}</dd>
-        </div>
-        <div className="flex justify-between gap-4 px-8 py-4">
-          <dt className="text-tinta-suave">Foto de perfil</dt>
-          <dd className="font-semibold">{user?.image ? 'Del proveedor' : 'Iniciales (sin foto)'}</dd>
-        </div>
+      <dl className="mt-12 divide-y divide-linea border-y border-linea">
+        {rows.map((r) => (
+          <div key={r.label} className="grid grid-cols-[180px_1fr] gap-4 py-4">
+            <dt className="text-acero-3">{r.label}</dt>
+            <dd className="truncate font-semibold">{r.value}</dd>
+          </div>
+        ))}
       </dl>
     </div>
   );

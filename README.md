@@ -1,4 +1,4 @@
-# Lab 13 - Autenticación con NextAuth.js
+# Cerrojo - Lab 13: Autenticación con NextAuth.js
 
 ## Estructura
 
@@ -14,10 +14,13 @@ src/
 │   ├── layout.tsx                        # Navbar + SessionProvider
 │   └── page.tsx                          # Redirige a /dashboard
 ├── components/
-│   ├── AuthShell.tsx                     # Pantalla dividida de login/registro
+│   ├── AuthShell.tsx                     # Pantalla de acceso (cerradura + formulario)
 │   ├── Avatar.tsx
+│   ├── Brand.tsx
+│   ├── Buttons.tsx
+│   ├── Countdown.tsx                     # Cuenta regresiva del bloqueo
 │   ├── Field.tsx
-│   ├── LockPins.tsx                      # Indicador de intentos fallidos
+│   ├── Lock.tsx                          # Cerradura animada (intentos, bloqueo, acceso)
 │   ├── LogoutButton.tsx
 │   └── SessionProvider.tsx
 ├── lib/

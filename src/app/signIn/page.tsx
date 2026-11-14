@@ -6,15 +6,20 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import AuthShell, { AuthLink } from '@/components/AuthShell';
 import Field from '@/components/Field';
-import LockPins from '@/components/LockPins';
+import Lock, { type LockState } from '@/components/Lock';
+import Countdown from '@/components/Countdown';
+import { PrimaryButton, ProviderButton } from '@/components/Buttons';
 
 const MAX_ATTEMPTS = 3;
 
-// Traduce el mensaje del servidor a cuántos pines bajar
-function attemptsFromError(error: string) {
-  if (/bloqueada/i.test(error)) return MAX_ATTEMPTS;
+// Lee el mensaje del servidor: cuántos intentos van y si la cuenta quedó bloqueada
+function readError(error: string) {
+  const fresh = /Demasiados intentos/i.test(error);
+  const wait = error.match(/en (\d+) minuto/);
+  if (fresh) return { failed: MAX_ATTEMPTS, lockMinutes: 5 };
+  if (wait) return { failed: MAX_ATTEMPTS, lockMinutes: Number(wait[1]) };
   const left = error.match(/Te quedan (\d+)/);
-  return left ? MAX_ATTEMPTS - Number(left[1]) : 0;
+  return { failed: left ? MAX_ATTEMPTS - Number(left[1]) : 0, lockMinutes: 0 };
 }
 
 function LoginForm() {
@@ -26,6 +31,10 @@ function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(0);
+  const [failKey, setFailKey] = useState(0);
+  const [lockedUntil, setLockedUntil] = useState<number | null>(null);
+  const [open, setOpen] = useState(false);
 
   const handleGoogleSignIn = async () => {
     const result = await signIn('google', {
@@ -57,21 +66,64 @@ function LoginForm() {
 
     if (result?.error) {
       // Mensaje lanzado en authorize(): credenciales incorrectas o cuenta bloqueada
+      const info = readError(result.error);
       setError(result.error);
+      setFailed(info.failed);
+      setFailKey((k) => k + 1);
+      setLockedUntil(info.lockMinutes ? Date.now() + info.lockMinutes * 60_000 : null);
       return;
     }
 
-    // Navegación completa: evita que Next reutilice la redirección
-    // a /signIn que quedó en caché antes de iniciar sesión
-    window.location.href = '/dashboard';
+    // La cerradura se abre y luego se entra al dashboard.
+    // Navegación completa: evita que Next reutilice la redirección a /signIn en caché.
+    setOpen(true);
+    setTimeout(() => {
+      window.location.href = '/dashboard';
+    }, 650);
   };
 
-  const used = error ? attemptsFromError(error) : 0;
+  const locked = lockedUntil !== null;
+  const state: LockState = open
+    ? 'abierta'
+    : locked
+      ? 'bloqueada'
+      : failed > 0
+        ? 'fallo'
+        : password
+          ? 'llave'
+          : 'reposo';
+
+  const caption = open ? (
+    <span className="text-[#8fd6ad]">Acceso concedido.</span>
+  ) : locked ? (
+    <span className="block">
+      Cuenta bloqueada. Se abre en{' '}
+      <Countdown
+        until={lockedUntil!}
+        onDone={() => {
+          setLockedUntil(null);
+          setFailed(0);
+          setError('');
+        }}
+      />
+    </span>
+  ) : failed > 0 ? (
+    `${failed} de ${MAX_ATTEMPTS} intentos fallidos.`
+  ) : password ? (
+    'Llave puesta. Inicia sesión para girarla.'
+  ) : (
+    'Escribe tu contraseña para poner la llave.'
+  );
 
   return (
-    <AuthShell title="Inicia sesión" subtitle="Entra con tu correo o con una de tus cuentas.">
+    <AuthShell
+      title="Inicia sesión"
+      subtitle="Usa tu cuenta de Cerrojo o entra con Google o GitHub."
+      lock={<Lock state={state} failed={failed} failKey={failKey} />}
+      caption={caption}
+    >
       {registered && !error && (
-        <p className="mb-6 rounded-md bg-verde/10 px-4 py-3 text-sm font-medium text-verde">
+        <p className="mb-6 rounded-lg bg-abierto/10 px-4 py-3 text-sm font-medium text-abierto">
           Cuenta creada. Ya puedes iniciar sesión.
         </p>
       )}
@@ -94,46 +146,33 @@ function LoginForm() {
           required
         />
 
-        {error && (
-          <div className="space-y-2">
-            {used > 0 && <LockPins used={used} total={MAX_ATTEMPTS} />}
-            <p className="text-sm font-medium text-senal">{error}</p>
-          </div>
-        )}
+        <p role="alert" className="min-h-5 text-sm font-medium text-bloqueo">
+          {error}
+        </p>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-md bg-cobalto px-4 py-3 font-semibold text-white transition-colors hover:bg-cobalto-hondo disabled:opacity-60"
-        >
-          {loading ? 'Comprobando…' : 'Iniciar sesión'}
-        </button>
+        <PrimaryButton type="submit" disabled={loading || open}>
+          {open ? 'Entrando…' : loading ? 'Comprobando…' : 'Iniciar sesión'}
+        </PrimaryButton>
       </form>
 
-      <div className="my-6 flex items-center gap-3 text-sm text-tinta-suave">
+      <div className="my-6 flex items-center gap-3 text-sm text-acero-3">
         <span className="h-px flex-1 bg-linea" />
-        o
+        o entra con
         <span className="h-px flex-1 bg-linea" />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <button
-          onClick={handleGoogleSignIn}
-          className="flex items-center justify-center gap-2 rounded-md border-2 border-linea px-4 py-2.5 font-semibold text-tinta transition-colors hover:border-tinta"
-        >
+        <ProviderButton onClick={handleGoogleSignIn}>
           <FaGoogle aria-hidden="true" />
           Google
-        </button>
-        <button
-          onClick={handleGitHubSignIn}
-          className="flex items-center justify-center gap-2 rounded-md border-2 border-linea px-4 py-2.5 font-semibold text-tinta transition-colors hover:border-tinta"
-        >
+        </ProviderButton>
+        <ProviderButton onClick={handleGitHubSignIn}>
           <FaGithub aria-hidden="true" />
           GitHub
-        </button>
+        </ProviderButton>
       </div>
 
-      <p className="mt-8 text-sm text-tinta-suave">
+      <p className="mt-8 text-sm text-acero-3">
         ¿Aún no tienes cuenta? <AuthLink href="/register">Crear cuenta</AuthLink>
       </p>
     </AuthShell>
